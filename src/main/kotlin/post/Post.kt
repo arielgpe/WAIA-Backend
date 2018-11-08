@@ -1,4 +1,4 @@
-package models
+package post
 
 import java.util.concurrent.atomic.AtomicInteger
 
