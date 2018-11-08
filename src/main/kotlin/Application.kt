@@ -1,10 +1,9 @@
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.crud
 import io.javalin.apibuilder.ApiBuilder.get
-import post.PostController
+import main.kotlin.post.PostController
 
 fun main(args: Array<String>) {
-
     val app = Javalin.create()
             .apply {
                 error(404) { ctx ->
@@ -24,6 +23,3 @@ fun main(args: Array<String>) {
     }
 
 }
-
-
-

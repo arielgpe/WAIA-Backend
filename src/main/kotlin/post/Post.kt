@@ -1,4 +1,4 @@
-package post
+package main.kotlin.post
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -19,7 +19,7 @@ class PostDao {
 
     fun save(content: String, ipAddress: String){
         val id = lastId.incrementAndGet()
-        posts.add(Post(id = id, content = content))
+        posts.add(Post(id = id, content = content, ipAddress = ipAddress))
     }
 
     fun findById(id: Int): Post? {
