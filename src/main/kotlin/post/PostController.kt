@@ -13,23 +13,21 @@ object PostController : CrudHandler {
     }
 
     override fun delete(ctx: Context, resourceId: String) {
-        val postId = ctx.pathParam("id").toInt()
-        postDao.delete(id = postId)
+        postDao.delete(id = resourceId)
         ctx.status(204)
     }
 
     override fun getAll(ctx: Context) {
-        ctx.json(postDao.posts)
+        ctx.json(postDao.findAll())
     }
 
     override fun getOne(ctx: Context, resourceId: String) {
-        val postId = ctx.pathParam("id").toInt()
-        ctx.json(postDao.findById(id = postId)!!)
+        ctx.json(postDao.findById(id = resourceId)!!)
     }
 
     override fun update(ctx: Context, resourceId: String) {
         val post = ctx.body<Post>()
-        postDao.update(post = post)
+        postDao.update(post = post, id = resourceId)
         ctx.status(204)
     }
 

@@ -1,36 +1,32 @@
 package main.kotlin.post
 
-import java.util.concurrent.atomic.AtomicInteger
+import main.kotlin.MongoDriver
+import org.bson.codecs.pojo.annotations.BsonId
+import org.litote.kmongo.*
 
-data class Post(val id: Int, val name: String = "Anon", val content: String, val likes: Int = 0,
-                val ipAddress: String = "0.0.0.0", val createdDate: Int = 0)
+data class Post(@BsonId val id: String = newId<String>().toString(), val name: String = "Anon", val content: String, val likes: Int = 0,
+                val ipAddress: String = "0.0.0.0")
 
-class PostDao {
-
-    val posts = mutableListOf(
-            Post(id = 1, content = "Test Post", ipAddress = "0.0.0.0"),
-            Post(id = 2, content = "I hate when my post dont work", ipAddress = "0.0.0.0"),
-            Post(id = 3, content = "Why do i have to make DAOS", ipAddress = "0.0.0.0"),
-            Post(id = 4, content = "Yeah i get it whatever", ipAddress = "0.0.0.0"),
-            Post(id = 5, content = "ffs", ipAddress = "0.0.0.0")
-    )
-
-    var lastId: AtomicInteger = AtomicInteger(posts.size)
+class PostDao: MongoDriver() {
+    private val posts = database.getCollection<Post>()
 
     fun save(content: String, ipAddress: String){
-        val id = lastId.incrementAndGet()
-        posts.add(Post(id = id, content = content, ipAddress = ipAddress))
+        posts.insertOne(Post(content = content, ipAddress = ipAddress))
     }
 
-    fun findById(id: Int): Post? {
-        return posts.find { it -> it.id == id}
+    fun findAll(): MutableList<Post>{
+        return posts.find<Post>().toMutableList()
     }
 
-    fun update(post: Post) {
-        posts[post.id - 1] = post
+    fun findById(id: String): Post? {
+        return posts.findOneById(id.toId<Post>())
     }
 
-    fun delete(id: Int){
-        posts.remove(findById(id))
+    fun update(id: String, post: Post) {
+        posts.updateOneById(id.toId<Post>(), set(Post::content, post.content))
+    }
+
+    fun delete(id: String){
+        posts.deleteOneById(id.toId<Post>())
     }
 }
