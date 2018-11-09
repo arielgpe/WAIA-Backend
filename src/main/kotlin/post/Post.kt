@@ -4,7 +4,7 @@ import main.kotlin.MongoDriver
 import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.*
 
-data class Post(@BsonId val id: String = newId<String>().toString(), val name: String = "Anon", val content: String, val likes: Int = 0,
+data class Post(@BsonId val id: String = newId<String>().toString(), val name: String = "Anon", val content: String,
                 val ipAddress: String = "0.0.0.0")
 
 class PostDao: MongoDriver() {
