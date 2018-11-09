@@ -8,7 +8,8 @@ import java.util.*
 
 data class Ban(@BsonId val id: String = newId<Ban>().toString(), val ipAddress: String, val createdTimestamp: Long = Calendar.getInstance().timeInMillis)
 
-class BanDao : MongoDriver() {
+class BanDao {
+    private val database = MongoDriver().database
     private val bans = database.getCollection<Ban>()
 
     fun save(ipAddress: String): Status {

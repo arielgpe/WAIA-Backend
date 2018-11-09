@@ -9,7 +9,8 @@ import java.util.*
 data class Post(@BsonId val id: String = newId<Post>().toString(), val name: String = "Anon", val content: String,
                 val ipAddress: String = "0.0.0.0", val createdTimestamp: Long = Calendar.getInstance().timeInMillis)
 
-class PostDao : MongoDriver() {
+class PostDao {
+    private val database = MongoDriver().database
     private val posts = database.getCollection<Post>()
 
     fun save(content: String, ipAddress: String): Post {
