@@ -1,4 +1,4 @@
-package main.kotlin.post
+package waia.main.kotlin.post
 
 import io.javalin.Context
 import io.javalin.apibuilder.CrudHandler
@@ -8,13 +8,14 @@ object PostController : CrudHandler {
 
     override fun create(ctx: Context) {
         val post = ctx.body<Post>()
-        postDao.save(content = post.content, ipAddress = ctx.ip())
-        ctx.status(201)
+        val newPost = postDao.save(content = post.content, ipAddress = ctx.ip())
+        ctx.status(200)
+        ctx.json(newPost)
     }
 
     override fun delete(ctx: Context, resourceId: String) {
         postDao.delete(id = resourceId)
-        ctx.status(204)
+        ctx.status(200)
     }
 
     override fun getAll(ctx: Context) {

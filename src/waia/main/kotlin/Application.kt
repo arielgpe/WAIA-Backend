@@ -1,7 +1,7 @@
 import io.javalin.Javalin
-import io.javalin.apibuilder.ApiBuilder.crud
-import io.javalin.apibuilder.ApiBuilder.get
-import main.kotlin.post.PostController
+import io.javalin.apibuilder.ApiBuilder.*
+import waia.main.kotlin.banned.BanController
+import waia.main.kotlin.post.PostController
 
 fun main(args: Array<String>) {
     val app = Javalin.create()
@@ -12,14 +12,25 @@ fun main(args: Array<String>) {
             }
             .contextPath("/api")
             .enableRouteOverview("/overview")
-            .start(3000)
+            .start(3001)
 
     app.routes {
         get("/") { ctx ->
             ctx.result("Hello World")
         }
 
+        //Posts
         crud("/posts/:id", PostController)
+
+        //Bans
+        path("bans"){
+            get(BanController::getAll)
+            post(BanController::create)
+            path(":ip"){
+                get(BanController::getOne)
+                delete(BanController::delete)
+            }
+        }
     }
 
 }
