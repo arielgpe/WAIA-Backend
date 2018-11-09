@@ -1,8 +1,8 @@
 package waia.main.kotlin.post
 
+import mongo
 import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.*
-import waia.main.kotlin.MongoDriver
 import waia.main.kotlin.utils.Status
 import java.util.*
 
@@ -10,7 +10,7 @@ data class Post(@BsonId val id: String = newId<Post>().toString(), val name: Str
                 val ipAddress: String = "0.0.0.0", val createdTimestamp: Long = Calendar.getInstance().timeInMillis)
 
 class PostDao {
-    private val database = MongoDriver().database
+    private val database = mongo().database
     private val posts = database.getCollection<Post>()
 
     fun save(content: String, ipAddress: String): Post {

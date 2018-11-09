@@ -1,15 +1,18 @@
 package waia.main.kotlin.banned
 
-import waia.main.kotlin.MongoDriver
-import waia.main.kotlin.utils.Status
+import mongo
 import org.bson.codecs.pojo.annotations.BsonId
-import org.litote.kmongo.*
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.newId
+import waia.main.kotlin.utils.Status
 import java.util.*
 
 data class Ban(@BsonId val id: String = newId<Ban>().toString(), val ipAddress: String, val createdTimestamp: Long = Calendar.getInstance().timeInMillis)
 
 class BanDao {
-    private val database = MongoDriver().database
+    private val database = mongo().database
     private val bans = database.getCollection<Ban>()
 
     fun save(ipAddress: String): Status {

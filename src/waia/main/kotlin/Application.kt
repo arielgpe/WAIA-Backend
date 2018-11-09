@@ -1,7 +1,11 @@
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
+import waia.main.kotlin.MongoAdapter
+import waia.main.kotlin.MongoDriver
 import waia.main.kotlin.banned.BanController
 import waia.main.kotlin.post.PostController
+
+fun mongo(): MongoAdapter = MongoDriver
 
 fun main(args: Array<String>) {
     val app = Javalin.create()

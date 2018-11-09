@@ -5,14 +5,14 @@ import com.mongodb.client.MongoDatabase
 import org.litote.kmongo.KMongo
 
 
-open class MongoDriver: MongoAdapter {
+object MongoDriver : MongoAdapter {
     override val client: MongoClient
-        get() =  KMongo.createClient()
+        get() = KMongo.createClient()
     override val database: MongoDatabase
         get() = client.getDatabase("WAIA")
 }
 
-interface MongoAdapter{
+interface MongoAdapter {
     val client: MongoClient
     val database: MongoDatabase
 }
