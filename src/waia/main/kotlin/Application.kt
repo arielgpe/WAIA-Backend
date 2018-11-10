@@ -1,13 +1,14 @@
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
 import io.javalin.security.SecurityUtil.roles
-import main.kotlin.utils.Roles
-import main.kotlin.utils.getUserRole
 import waia.main.kotlin.MongoAdapter
 import waia.main.kotlin.MongoDriver
 import waia.main.kotlin.banned.BanController
 import waia.main.kotlin.post.PostController
+import waia.main.kotlin.user.UserController
+import waia.main.kotlin.utils.Roles
 import waia.main.kotlin.utils.Status
+import waia.main.kotlin.utils.getUserRole
 
 fun mongo(): MongoAdapter = MongoDriver
 
@@ -38,6 +39,16 @@ fun main(args: Array<String>) {
 
         //Posts
         crud("/posts/:id", PostController, roles(Roles.ANYONE))
+
+        //Users
+        path("users"){
+            get(UserController::getAll, roles(Roles.ANYONE))
+            post(UserController::create, roles(Roles.ANYONE))
+            path("login"){
+                post(UserController::login, roles(Roles.ANYONE))
+            }
+        }
+
 
         //Bans
         path("bans") {

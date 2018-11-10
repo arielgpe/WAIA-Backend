@@ -1,4 +1,4 @@
-package main.kotlin.utils
+package waia.main.kotlin.utils
 
 import io.javalin.Context
 import io.javalin.security.Role

@@ -9,13 +9,11 @@ object PostController : CrudHandler {
     override fun create(ctx: Context) {
         val post = ctx.body<Post>()
         val newPost = postDao.save(content = post.content, ipAddress = ctx.ip())
-        ctx.status(200)
         ctx.json(newPost)
     }
 
     override fun delete(ctx: Context, resourceId: String) {
         postDao.delete(id = resourceId)
-        ctx.status(200)
     }
 
     override fun getAll(ctx: Context) {
