@@ -1,5 +1,6 @@
 package waia.main.kotlin.user
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import mongo
 import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.*
