@@ -2,6 +2,7 @@ package waia.main.kotlin.user
 
 import io.javalin.Context
 import io.javalin.apibuilder.CrudHandler
+import waia.main.kotlin.utils.Status
 
 
 object UserController: CrudHandler {
@@ -11,7 +12,7 @@ object UserController: CrudHandler {
     override fun create(ctx: Context) {
         val user = ctx.body<User>()
         val newUser = userDao.save(user)
-        ctx.json(newUser)
+        ctx.json(newUser).status(if (newUser is Status) 400 else 200)
     }
 
     fun login(ctx: Context){

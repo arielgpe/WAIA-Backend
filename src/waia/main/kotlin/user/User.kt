@@ -10,8 +10,8 @@ import java.util.*
 
 
 data class User (@BsonId val id: String = newId<User>().toString(),
-                 val username: String,
-                 var password: String,
+                 val username: String = "",
+                 var password: String = "",
                  val active: Boolean = true,
                  val role: String = Roles.ANYONE.name,
                  val createdTimestamp: Long = Calendar.getInstance().timeInMillis)
@@ -22,11 +22,16 @@ class UserDao {
     private val database = mongo().database
     private val users = database.getCollection<User>()
 
-    fun save(user: User): User {
-        user.password = BCrypt.hashpw(user.password,
+    fun save(newUser: User): Any {
+        val user = findByUserName(newUser.username)
+        if (user != null) {
+            return Status(success = false, message = "User already exist")
+        }
+        newUser.password = BCrypt.hashpw(newUser.password,
                 BCrypt.gensalt(12))
-        users.insertOne(user)
-        return user
+        users.insertOne(newUser)
+        newUser.password = ""
+        return newUser
     }
 
     fun login(userName: String, password: String): Status {
@@ -46,11 +51,14 @@ class UserDao {
         return Status()
     }
 
-    fun findAll(): MutableList<User> = users.find().toMutableList()
+    fun findAll(): MutableList<User> = users.find()
+            .projection(exclude(User::password))
+            .toMutableList()
 
     fun findById(id: String): User? = users.findOneById(id.toId<User>())
 
-    fun findByUserName(userName: String): User? = users.findOne(User::username eq userName)
+    fun findByUserName(userName: String): User? =
+            users.findOne(User::username eq userName)
 
     fun update(id: String, user: User) {
         users.updateOneById(id.toId<User>(), set(User::javaClass, user))
