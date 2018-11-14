@@ -8,7 +8,7 @@ object PostController : CrudHandler {
 
     override fun create(ctx: Context) {
         val post = ctx.body<Post>()
-        val newPost = postDao.save(content = post.content, ipAddress = ctx.ip())
+        val newPost = postDao.save(content = post.content, ipAddress = ctx.ip(), user_id = post.user_id.toString())
         ctx.json(newPost)
     }
 

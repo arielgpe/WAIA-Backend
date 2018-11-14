@@ -1,21 +1,21 @@
 package waia.main.kotlin.user
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import mongo
 import org.bson.codecs.pojo.annotations.BsonId
 import org.litote.kmongo.*
 import org.mindrot.jbcrypt.BCrypt
+import waia.main.kotlin.post.Post
 import waia.main.kotlin.utils.Roles
 import waia.main.kotlin.utils.Status
 import java.util.*
 
 
-data class User (@BsonId val id: String = newId<User>().toString(),
-                 val username: String = "",
-                 var password: String = "",
-                 val active: Boolean = true,
-                 val role: String = Roles.ANYONE.name,
-                 val createdTimestamp: Long = Calendar.getInstance().timeInMillis)
+data class User(@BsonId val id: String = newId<User>().toString(),
+                val username: String = "",
+                var password: String = "",
+                val active: Boolean = true,
+                val role: String = Roles.ANYONE.name,
+                val createdTimestamp: Long = Calendar.getInstance().timeInMillis)
 
 
 class UserDao {
@@ -52,9 +52,10 @@ class UserDao {
         return Status()
     }
 
-    fun findAll(): MutableList<User> = users.find()
-            .projection(exclude(User::password))
-            .toMutableList()
+    fun findAll(): MutableList<User> =
+            users.find()
+                    .projection(project(exclude(User::password)))
+                    .toMutableList()
 
     fun findById(id: String): User? = users.findOneById(id.toId<User>())
 
