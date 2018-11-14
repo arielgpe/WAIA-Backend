@@ -4,23 +4,24 @@
 # ~~~~
 
 #Bans Routes
-GET         /api/v1/bans             controllers.BanController.findAll
-GET         /api/v1/bans/:id         controllers.BanController.findById(id: Long)
+GET         /api/v1/bans                            controllers.BanController.findAll
+GET         /api/v1/bans/:id                        controllers.BanController.findById(id: Long)
 
 
 #Users Routes
-GET         /api/v1/users            controllers.UserController.findAll
-POST        /api/v1/users            controllers.UserController.create
-GET         /api/v1/users/:id        controllers.UserController.findById(id: Long)
+GET         /api/v1/users                           controllers.UserController.findAll
+POST        /api/v1/users                           controllers.UserController.create
+GET         /api/v1/users/:id                       controllers.UserController.findById(id: Long)
+GET         /api/v1/users/username/:username        controllers.UserController.findByUserName(username: String)
 
 # An example controller showing a sample home page
-GET         /                        controllers.HomeController.index
+GET         /                                       controllers.HomeController.index
 # An example controller showing how to use dependency injection
-GET         /count                   controllers.CountController.count
+GET         /count                                  controllers.CountController.count
 # An example controller showing how to write asynchronous code
-GET         /message                 controllers.AsyncController.message
+GET         /message                                controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
 
       

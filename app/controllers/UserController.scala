@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.Inject
 import models.Users
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.{AbstractController, ControllerComponents}
 
 class UserController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
@@ -32,8 +32,8 @@ class UserController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   def create = Action { request =>
     val body = request.body.asJson
-    val username = body.get("username").toString()
-    val password = body.get("password").toString()
+    val username = body.get("username").as[String]
+    val password = body.get("password").as[String]
     val user = Users.create(username, password)
     if (user != null) {
       Ok(Json.toJson(user))
