@@ -12,6 +12,7 @@ GET         /api/v1/bans/:id                        controllers.BanController.fi
 GET         /api/v1/users                           controllers.UserController.findAll
 POST        /api/v1/users                           controllers.UserController.create
 GET         /api/v1/users/:id                       controllers.UserController.findById(id: Long)
+POST        /api/v1/users/login                     controllers.UserController.login
 GET         /api/v1/users/username/:username        controllers.UserController.findByUserName(username: String)
 
 # An example controller showing a sample home page

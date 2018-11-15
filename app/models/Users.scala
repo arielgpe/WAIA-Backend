@@ -33,9 +33,15 @@ object Users {
 
   def findByUserName(username: String): Users = find.where.eq("username", username).findOne
 
-  def create(username: String, password: String): Users = {
-    Logger.info("Username: "+username)
+  def login(username: String, password: String): Users = {
+    val user = findByUserName(username)
+    if (user != null && BCrypt.checkpw(password, user.password)) {
+      return user
+    }
+    null
+  }
 
+  def create(username: String, password: String): Users = {
     val existingUser = find.where.eq("username", username).findOne()
     if (existingUser != null) {
       return null
