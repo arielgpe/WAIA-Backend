@@ -2,12 +2,10 @@ package models
 
 import java.util.Calendar
 
-import io.ebean.annotation.{CreatedTimestamp, JsonIgnore, NotNull}
+import io.ebean.annotation.{CreatedTimestamp, NotNull}
 import io.ebean.{Ebean, Model, Query}
 import javax.persistence.{Column, Entity, Id}
 import org.mindrot.jbcrypt.BCrypt
-import play.api.Logger
-import play.api.libs.json
 import play.api.libs.json._
 import utils.Status
 
@@ -33,23 +31,22 @@ object Users {
 
   def findByUserName(username: String): Users = find.where.eq("username", username).findOne
 
-  def login(username: String, password: String): Users = {
-    val user = findByUserName(username)
-    if (user != null && BCrypt.checkpw(password, user.password)) {
-      return user
+  def login(user: Users): Users = {
+    val found = findByUserName(user.username)
+    if (found != null && BCrypt.checkpw(user.password, found.password)) {
+      return found
     }
     null
   }
 
-  def create(username: String, password: String): Users = {
-    val existingUser = find.where.eq("username", username).findOne()
+  def create(user: Users): Users = {
+    val existingUser = find.where.eq("username", user.username).findOne()
     if (existingUser != null) {
+      println("what")
       return null
     }
 
-    val user = new Users()
-    user.username = username
-    user.password = BCrypt.hashpw(password, BCrypt.gensalt(12))
+    user.password = BCrypt.hashpw(user.password, BCrypt.gensalt(12))
     user.save()
     user
   }
@@ -86,20 +83,28 @@ object Users {
 
 
   implicit object implicitUserWrite extends Format[Users] {
-    // convert from Person object to JSON (serializing to JSON)
     def writes(users: Users): JsValue = {
-      val personSeq = Seq(
+      val usersSeq = Seq(
         "id" -> JsNumber(users.id),
         "username" -> JsString(users.username),
         "active" -> JsBoolean(users.active),
         "role" -> JsString(users.role),
         "created_at" -> JsNumber(users.createdAt)
       )
-      JsObject(personSeq)
+      JsObject(usersSeq)
     }
-    // convert from JSON string to a Person object (de-serializing from JSON)
     def reads(json: JsValue): JsResult[Users] = {
-      JsSuccess(Users())
+      val user = new Users
+      val body = json.result.as[JsObject]
+      for (elem <- body.fields){
+        elem._1 match {
+          case "username" => user.username = elem._2.as[String]
+          case "password" => user.password = elem._2.as[String]
+          case "active" => user.active = elem._2.as[Boolean]
+          case _ => ""
+        }
+      }
+      JsSuccess(user)
     }
   }
 }

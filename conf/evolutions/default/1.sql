@@ -6,8 +6,9 @@
 create table bans (
   id                            bigint auto_increment not null,
   ip_address                    varchar(255) not null,
-  duration                      bigint not null,
-  reason                        varchar(255) not null,
+  from_date                     bigint not null,
+  to_date                       bigint not null,
+  reason                        varchar(255),
   created_timestamp             bigint not null,
   constraint uq_bans_ip_address unique (ip_address),
   constraint pk_bans primary key (id)

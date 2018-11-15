@@ -15,8 +15,9 @@ import scala.collection.JavaConverters._
 case class Bans() extends Model {
   @Id val id: Long = 0
   @NotNull @Column(unique = true) var ipAddress: String = ""
-  @NotNull var duration: Long = 0
-  @NotNull var reason: String = ""
+  @NotNull var fromDate: Long = 0
+  @NotNull var toDate: Long = 0
+  var reason: String = ""
   @CreatedTimestamp var createdTimestamp: Long = Calendar.getInstance.getTimeInMillis
 }
 
@@ -30,18 +31,15 @@ object Bans {
 
   def findByIpAddress(ipAddress: String): Bans = find.where.eq("ipAddress", ipAddress).findOne
 
-  def create(ipAddress: String, duration: Long, reason: String): Bans = {
-    val existingBan = findByIpAddress(ipAddress)
+  def create(ban: Bans): Bans = {
+    val existingBan = findByIpAddress(ban.ipAddress)
     if (existingBan != null) {
-      existingBan.duration = duration
-      existingBan.reason = reason
+      existingBan.fromDate = ban.fromDate
+      existingBan.toDate = ban.toDate
+      existingBan.reason = ban.reason
       existingBan.update()
       existingBan
     } else {
-      val ban = new Bans()
-      ban.ipAddress = ipAddress
-      ban.duration = duration
-      ban.reason = reason
       ban.save()
       ban
     }
@@ -50,7 +48,7 @@ object Bans {
 
   def delete(ipAddress: String): Status = {
     val ban = findByIpAddress(ipAddress)
-    val status = new Status
+    val status = new Status(message = "Ban successfully deleted")
     if (ban != null) {
       ban.delete()
     } else {
@@ -62,19 +60,29 @@ object Bans {
   }
 
   implicit object implicitBanWrite extends Format[Bans] {
-    // convert from Person object to JSON (serializing to JSON)
     def writes(ban: Bans): JsValue = {
       val personSeq = Seq(
         "id" -> JsString(ban.id.toString),
         "ipAddress" -> JsString(ban.ipAddress),
         "reason" -> JsString(ban.reason),
-        "duration" -> JsNumber(ban.duration)
+        "from" -> JsNumber(ban.fromDate),
+        "to" -> JsNumber(ban.toDate)
       )
       JsObject(personSeq)
     }
-    // convert from JSON string to a Person object (de-serializing from JSON)
     def reads(json: JsValue): JsResult[Bans] = {
-      JsSuccess(Bans())
+      val ban = new Bans
+      val body = json.result.as[JsObject]
+      for (elem <- body.fields) {
+        elem._1 match {
+          case "ipAddress" => ban.ipAddress = elem._2.as[String]
+          case "reason" => ban.reason = elem._2.as[String]
+          case "from" => ban.fromDate = elem._2.as[Long]
+          case "to" => ban.toDate = elem._2.as[Long]
+          case _ => ""
+        }
+      }
+      JsSuccess(ban)
     }
   }
 }
