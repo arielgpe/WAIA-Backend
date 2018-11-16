@@ -6,7 +6,6 @@ import io.ebean.annotation.{CreatedTimestamp, NotNull}
 import io.ebean.{Ebean, Model, Query}
 import javax.persistence.{Column, Entity, Id}
 import org.mindrot.jbcrypt.BCrypt
-import play.api.libs.json
 import play.api.libs.json._
 import utils.Status
 

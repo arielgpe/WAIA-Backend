@@ -1,15 +1,16 @@
 package controllers
 
+import actions.AuthAction
 import com.google.inject.Inject
 import models.Users
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 
-class UserController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class UserController @Inject()(authAction: AuthAction, cc: ControllerComponents) extends AbstractController(cc) {
 
-  def findAll = Action(Ok(Json.toJson(Users.findAll)))
+  def findAll = authAction(Ok(Json.toJson(Users.findAll)))
 
-  def findById(id: Long) = Action {
+  def findById(id: Long) = authAction {
     val user = Users.findById(id)
     if (user == null) {
       NotFound(Json.toJson(utils.Status(success = false, message = "Not found")))
