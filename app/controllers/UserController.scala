@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.Inject
 import models.Users
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 
 class UserController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
@@ -27,6 +27,11 @@ class UserController @Inject()(cc: ControllerComponents) extends AbstractControl
     }
   }
 
+  def findTokens(id: Long) = Action {
+    val tokens = Users.findTokens(id)
+    Ok(Json.toJson(tokens))
+  }
+
   def create: Action[Users] = Action(parse.json[Users]) { request =>
     val user = request.body
     val newUser = Users.create(user)
@@ -41,7 +46,14 @@ class UserController @Inject()(cc: ControllerComponents) extends AbstractControl
     val body = request.body
     val user = Users.login(body)
     if (user != null) {
-      Ok(Json.toJson(user))
+      val jsObject = JsObject(Seq(
+        "id" -> JsNumber(user.id),
+        "token" -> JsString(user.token),
+        "tls" -> JsNumber(user.tls),
+        "created_at" -> JsNumber(user.createdTimestamp),
+        "user" -> Json.toJson(user.user)
+      ))
+      Ok(jsObject)
     } else {
       val status = utils.Status(success = false, message = "Unauthorized")
       Unauthorized(Json.toJson(status))

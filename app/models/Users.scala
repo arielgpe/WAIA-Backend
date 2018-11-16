@@ -6,6 +6,7 @@ import io.ebean.annotation.{CreatedTimestamp, NotNull}
 import io.ebean.{Ebean, Model, Query}
 import javax.persistence.{Column, Entity, Id}
 import org.mindrot.jbcrypt.BCrypt
+import play.api.libs.json
 import play.api.libs.json._
 import utils.Status
 
@@ -29,12 +30,16 @@ object Users {
 
   def findById(id: Long): Users = find.where.idEq(id).findOne
 
-  def findByUserName(username: String): Users = find.where.eq("username", username).findOne
+  def findByUserName(username: String): Users =
+    find.where.eq("username", username).findOne
 
-  def login(user: Users): Users = {
+  def findTokens(id: Long): List[AccessTokens] = AccessTokens.findByUser(findById(id))
+
+  def login(user: Users): AccessTokens = {
     val found = findByUserName(user.username)
     if (found != null && BCrypt.checkpw(user.password, found.password)) {
-      return found
+      val token = AccessTokens.create(found)
+      return token
     }
     null
   }

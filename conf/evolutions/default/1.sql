@@ -3,6 +3,15 @@
 
 # --- !Ups
 
+create table access_tokens (
+  id                            bigint auto_increment not null,
+  token                         varchar(255) not null,
+  tls                           double not null,
+  user_id                       bigint,
+  created_timestamp             bigint not null,
+  constraint pk_access_tokens primary key (id)
+);
+
 create table bans (
   id                            bigint auto_increment not null,
   ip_address                    varchar(255) not null,
@@ -35,14 +44,22 @@ create table users (
   constraint pk_users primary key (id)
 );
 
+create index ix_access_tokens_user_id on access_tokens (user_id);
+alter table access_tokens add constraint fk_access_tokens_user_id foreign key (user_id) references users (id) on delete restrict on update restrict;
+
 create index ix_posts_user_id on posts (user_id);
 alter table posts add constraint fk_posts_user_id foreign key (user_id) references users (id) on delete restrict on update restrict;
 
 
 # --- !Downs
 
+alter table access_tokens drop constraint if exists fk_access_tokens_user_id;
+drop index if exists ix_access_tokens_user_id;
+
 alter table posts drop constraint if exists fk_posts_user_id;
 drop index if exists ix_posts_user_id;
+
+drop table if exists access_tokens;
 
 drop table if exists bans;
 
