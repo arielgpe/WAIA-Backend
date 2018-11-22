@@ -5,7 +5,6 @@ import java.util.Calendar
 import io.ebean.annotation.{CreatedTimestamp, NotNull}
 import io.ebean.{Ebean, Model, Query}
 import javax.persistence.{Entity, Id, ManyToOne}
-import play.api.libs.json
 import play.api.libs.json._
 
 import scala.collection.JavaConverters._
@@ -34,19 +33,21 @@ object Posts {
   }
 
   implicit object implicitPostWrite extends Format[Posts] {
-    override def writes(posts: Posts): JsValue = {
+    override def writes(post: Posts): JsValue = {
       var postsSeq = Seq(
-        "id" -> JsNumber(posts.id),
-        "author" -> JsString(posts.author),
-        "content" -> JsString(posts.content)
+        "id" -> JsNumber(post.id),
+        "author" -> JsString(post.author),
+        "content" -> JsString(post.content),
+        "reports" -> JsNumber(Reports.countByPost(post))
       )
 
-      if (posts.user != null) {
-        postsSeq = postsSeq :+ ("user" -> json.JsObject(Seq(
-          "id" -> JsNumber(posts.user.id),
-          "name" -> JsString(posts.user.username)
+      if (post.user != null) {
+        postsSeq = postsSeq :+ ("user" -> JsObject(Seq(
+          "id" -> JsNumber(post.user.id),
+          "name" -> JsString(post.user.username)
         )))
       }
+
       JsObject(postsSeq)
     }
 

@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject.Inject
-import models.Posts
+import models.{Posts, Reports}
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -23,6 +23,12 @@ class PostController @Inject()(cc: ControllerComponents) extends AbstractControl
     val body = request.body
     body.ipAddress = request.remoteAddress
     Ok(Json.toJson(Posts.create(body)))
+  }
+
+  def report: Action[Reports] = Action(parse.json[Reports]) { request =>
+    val body = request.body
+    body.ipAddress = request.remoteAddress
+    Ok(Json.toJson(Reports.create(body)))
   }
 
 }

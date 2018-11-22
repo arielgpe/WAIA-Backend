@@ -12,6 +12,7 @@ DELETE        /api/v1/bans/:ipAddress                 controllers.BanController.
 #Posts Routes
 GET           /api/v1/posts                           controllers.PostController.findAll
 POST          /api/v1/posts                           controllers.PostController.create
+POST          /api/v1/posts/report                controllers.PostController.report
 
 
 #Users Routes

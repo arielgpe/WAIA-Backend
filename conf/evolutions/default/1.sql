@@ -33,6 +33,14 @@ create table posts (
   constraint pk_posts primary key (id)
 );
 
+create table reports (
+  id                            bigint auto_increment not null,
+  reason                        varchar(255) not null,
+  ip_address                    varchar(255),
+  post_id                       bigint,
+  constraint pk_reports primary key (id)
+);
+
 create table users (
   id                            bigint auto_increment not null,
   username                      varchar(255),
@@ -50,6 +58,9 @@ alter table access_tokens add constraint fk_access_tokens_user_id foreign key (u
 create index ix_posts_user_id on posts (user_id);
 alter table posts add constraint fk_posts_user_id foreign key (user_id) references users (id) on delete restrict on update restrict;
 
+create index ix_reports_post_id on reports (post_id);
+alter table reports add constraint fk_reports_post_id foreign key (post_id) references posts (id) on delete restrict on update restrict;
+
 
 # --- !Downs
 
@@ -59,11 +70,16 @@ drop index if exists ix_access_tokens_user_id;
 alter table posts drop constraint if exists fk_posts_user_id;
 drop index if exists ix_posts_user_id;
 
+alter table reports drop constraint if exists fk_reports_post_id;
+drop index if exists ix_reports_post_id;
+
 drop table if exists access_tokens;
 
 drop table if exists bans;
 
 drop table if exists posts;
+
+drop table if exists reports;
 
 drop table if exists users;
 
